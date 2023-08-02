@@ -1,28 +1,67 @@
-using Catalog.Shared;
+using MediatR;
+using Orders.Application.Contracts;
 using Orders.Application.UseCases.Dtos;
+using Orders.Domain;
+using Microsoft.Extensions.Logging;
 
 namespace Orders.Application.UseCases;
 
 public class AddToCart
 {
-    private readonly ICatalogModuleAPI _ctatalogModule;
-    
-    public AddToCart(ICatalogModuleAPI ctatalogModule)
+    private readonly ICatalogGateway _catalogGateway;
+    private readonly ICartRepo _cartRepo;
+    private readonly ILogger<AddToCart> _logger;
+    private readonly IMediator _mediator;
+    public AddToCart(ICatalogGateway catalogGateway, ICartRepo cartRepo, ILogger<AddToCart> logger, IMediator mediator)
     {
-        _ctatalogModule = ctatalogModule;
+        _catalogGateway = catalogGateway;
+        _cartRepo = cartRepo;
+        _logger = logger;
+        _mediator = mediator;
     }
 
-    public Task Execute(AddToCartRequest request)
+    public async Task<Guid> Execute(AddToCartRequest request)
     {
-        var product = _ctatalogModule.GetProductBySku(request.ProductSku);
-        if (product == null)
-            throw new ProductNotFoundException();
-        
-        Console.Write("Adding product SKU to Cart");
-        return Task.CompletedTask;
+        var product = await ThrowIfProductNotAvailable(request);
+
+        var cart = await _cartRepo.GetById(new CartId(new Guid(request.CartId))) ?? Cart.NewCart(request.UserId);
+
+        cart.AddToCart(product, request.ProductQuantity);
+
+        _logger.LogInformation("Adding {Product} SKU to Cart", product);
+        await _cartRepo.SaveAsync(cart);
+        await _mediator.Publish(new CartItemModified(cart.Id.Id));
+        return cart.Id.Id;
     }
+
+    private async Task<Product> ThrowIfProductNotAvailable(AddToCartRequest request)
+    {
+        var product = await _catalogGateway.GetProductBySku(request.ProductSku);
+        if (product == null || product.IsNotAvailable(request.ProductQuantity))
+            throw new ProductNotFoundException();
+        return product;
+    }
+}
+
+public class CartItemModified : INotification
+{
+    public CartItemModified(Guid id)
+    {
+        this.CartId = id;
+    }
+
+    public Guid CartId { get; set; }
 }
 
 public class ProductNotFoundException : Exception
 {
+}
+
+public class CartItemModifedHandler : INotificationHandler<CartItemModified>
+{
+    public Task Handle(CartItemModified notification, CancellationToken cancellationToken)
+    {
+        Console.Write("Notification received "+ notification.CartId);
+        return Task.CompletedTask;
+    }
 }

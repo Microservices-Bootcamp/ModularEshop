@@ -7,7 +7,7 @@ namespace Orders.Api.Controllers;
 
 [ApiController]
 [Route("/carts")]
-public class CartsController: ControllerBase
+public class CartsController : ControllerBase
 {
     private AddToCart _addToCart;
 
@@ -19,7 +19,12 @@ public class CartsController: ControllerBase
     [HttpPost("/carts/add-to-cart")]
     public async Task<IActionResult> AddToCart(AddToCartRequest request)
     {
-        await _addToCart.Execute(request);
-        return Ok("Product Added to Cart!");
+        var cartId = await _addToCart.Execute(request);
+        return Ok(new AddToCartResponse { CartId = cartId });
     }
+}
+
+public class AddToCartResponse
+{
+    public Guid CartId { get; set; }
 }

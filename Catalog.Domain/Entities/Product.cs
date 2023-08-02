@@ -42,7 +42,7 @@ public class Product
             costPrice,
             sellingPrice,
             count,
-            false
+            true
         );
         product._domainEvents.Add(new ProductCreated(sku, categoryId));
         return product;
