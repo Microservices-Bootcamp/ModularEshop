@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Orders.Application.UseCases;
 using Orders.Infrastructure;
 
@@ -9,7 +10,7 @@ public static class Extensions
     public static IServiceCollection AddOrderModule(this IServiceCollection services)
     {
         services.AddOrdersInfrastructure()
-            .AddTransient<CartItemModifedHandler>()
+            .AddScoped<CartItemModifedHandler>()
             .AddTransient<AddToCart>();
         return services;
     }

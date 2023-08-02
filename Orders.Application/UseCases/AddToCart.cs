@@ -45,6 +45,10 @@ public class AddToCart
 
 public class CartItemModified : INotification
 {
+    public CartItemModified()
+    {
+        
+    }
     public CartItemModified(Guid id)
     {
         this.CartId = id;

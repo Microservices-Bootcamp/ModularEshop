@@ -7,9 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddCatalogModule()
-    .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>())
     .AddAuthenticationModule(builder.Configuration)
     .AddOrderModule();
+AppDomain.CurrentDomain.GetAssemblies().ToList().ForEach(
+    assembly => builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly)));
 builder.Services.AddControllers();
 var app = builder.Build();
 
