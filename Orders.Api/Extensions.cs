@@ -10,7 +10,6 @@ public static class Extensions
     public static IServiceCollection AddOrderModule(this IServiceCollection services)
     {
         services.AddOrdersInfrastructure()
-            .AddScoped<CartItemModifedHandler>()
             .AddTransient<AddToCart>();
         return services;
     }

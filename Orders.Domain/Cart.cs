@@ -27,4 +27,4 @@ public class Cart
 
 internal record CartItem(Product Product, int Qty);
 
-public record CartId(Guid Id);
+public record CartId(Guid value);

@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Convey.MessageBrokers.RabbitMQ" Version="1.1.448" />
       <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0-preview.6.23329.7" />

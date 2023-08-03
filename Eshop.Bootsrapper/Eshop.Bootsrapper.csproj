@@ -17,6 +17,7 @@
       <ProjectReference Include="..\Authentication.API\Authentication.API.csproj" />
       <ProjectReference Include="..\Catalog.API\Catalog.API.csproj" />
       <ProjectReference Include="..\Orders.Api\Orders.Api.csproj" />
+      <ProjectReference Include="..\Shipping.Api\Shipping.Api.csproj" />
     </ItemGroup>
 
 </Project>

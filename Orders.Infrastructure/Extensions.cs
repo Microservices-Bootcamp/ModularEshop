@@ -10,6 +10,7 @@ public static class Extensions
     {
         services.AddTransient<ICatalogGateway, CatalogGateway>();
         services.AddTransient<ICartRepo, CartRepoInMemory>();
+        services.AddTransient<ICartPublisher, RabbitMQCartPublisher>();
         return services;
     }
 }
